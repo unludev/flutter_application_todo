@@ -63,4 +63,9 @@ class TodoService {
     return await db!
         .update('todos', todo.toMap(), where: 'id=?', whereArgs: [todo.id]);
   }
+
+  Future<int> delete(Todo todo) async {
+    Database? db = await this.db;
+    return await db!.delete('todos', where: 'id=?', whereArgs: [todo.id]);
+  }
 }

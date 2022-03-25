@@ -5,6 +5,7 @@ import 'package:flutter_application_todo/data/todo_service.dart';
 import 'package:flutter_application_todo/pages/todo_page.dart';
 
 import '../models/todo.dart';
+import 'todo_detail.dart';
 
 class TodoListPage extends StatefulWidget {
   @override
@@ -66,6 +67,9 @@ class _TodoListPageState extends State<TodoListPage> {
                 child: ListTile(
                   title: Text(todos[index].title!),
                   subtitle: Text(todos[index].description!),
+                  onTap: () {
+                    goToDetail(todos[index]);
+                  },
                   trailing: Checkbox(
                     onChanged: (value) {
                       todos[index].isDone = value;
@@ -91,5 +95,15 @@ class _TodoListPageState extends State<TodoListPage> {
         doneTodos = value;
       });
     });
+  }
+
+  void goToDetail(Todo todo) async {
+    var result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TodoDetail(todo)));
+    if (result != null) {
+      if (result) {
+        loadData();
+      }
+    }
   }
 }
