@@ -7,6 +7,12 @@ import 'package:sqflite/sqflite.dart';
 import '../models/todo.dart';
 
 class TodoService {
+  static TodoService instance = TodoService._internal();
+  TodoService._internal();
+  factory TodoService() {
+    return instance;
+  }
+
   Future<List<Todo>> getTodos(bool isDone) async {
     final mapList = await getTodoMaps();
     final List<Todo> todoList = [];
@@ -16,10 +22,10 @@ class TodoService {
     }
 
     if (isDone) {
-      return todoList.where((element) => element.isDone!).toList();
+      return todoList.where((element) => !element.isDone!).toList();
     }
 
-    return todoList.where((element) => !element.isDone!).toList();
+    return todoList.where((element) => element.isDone!).toList();
   }
 
   Future<List<Map<String, dynamic>>> getTodoMaps() async {

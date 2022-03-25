@@ -12,6 +12,7 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
+  TodoService service = TodoService.instance;
   List<Todo> todos = [];
   List<Todo> doneTodos = [];
 
@@ -47,7 +48,8 @@ class _TodoListPageState extends State<TodoListPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => TodoPage()));
+                  context, MaterialPageRoute(builder: (context) => TodoPage()))
+              .then((value) => loadData());
         },
         child: Icon(Icons.add),
       ),
@@ -55,30 +57,39 @@ class _TodoListPageState extends State<TodoListPage> {
   }
 
   Widget getTodoList(List<Todo> todos) {
-    return ListView.builder(
-        itemCount: todos.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-              title: Text(todos[index].title!),
-              subtitle: Text(todos[index].description!),
-              trailing: Checkbox(
-                onChanged: (value) {
-                  setState(() {
-                    todos[index].isDone = value;
-                  });
-                },
-                value: todos[index].isDone,
-              ),
-            ),
-          );
-        });
+    return todos.isEmpty
+        ? Center(child: Text('Liste Bos'))
+        : ListView.builder(
+            itemCount: todos.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: ListTile(
+                  title: Text(todos[index].title!),
+                  subtitle: Text(todos[index].description!),
+                  trailing: Checkbox(
+                    onChanged: (value) {
+                      todos[index].isDone = value;
+                      service
+                          .updateIsDone(todos[index])
+                          .then((value) => loadData());
+                    },
+                    value: todos[index].isDone,
+                  ),
+                ),
+              );
+            });
   }
 
   loadData() {
-    setState(() {
-      todos = TodoService.getTodos();
-      doneTodos = TodoService.getDoneTodos();
+    service.getTodos(true).then((value) {
+      setState(() {
+        todos = value;
+      });
+    });
+    service.getTodos(false).then((value) {
+      setState(() {
+        doneTodos = value;
+      });
     });
   }
 }
