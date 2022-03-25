@@ -59,7 +59,7 @@ class _TodoListPageState extends State<TodoListPage> {
 
   Widget getTodoList(List<Todo> todos) {
     return todos.isEmpty
-        ? Center(child: Text('Liste Bos'))
+        ? Center(child: Text('Add New Todo'))
         : ListView.builder(
             itemCount: todos.length,
             itemBuilder: (context, index) {
